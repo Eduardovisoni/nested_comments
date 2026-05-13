@@ -1,4 +1,5 @@
 package com.team.trees.engine;
 
-public record TreeView() {
-}
+import java.util.List;
+
+public record TreeView(Long id, String value, List<TreeView> children) {}

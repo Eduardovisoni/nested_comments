@@ -1,4 +1,11 @@
 package com.team.trees.api.dto;
 
-public record CommentResponse() {
-}
+import java.time.LocalDateTime;
+
+public record CommentResponse(
+        Long id,
+        String author,
+        String content,
+        LocalDateTime createdAt,
+        Long parentId
+) {}
