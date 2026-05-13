@@ -1,0 +1,225 @@
+openapi: 3.0.3
+info:
+  title: Nested Comments API
+  description: Backend para gestión de comentarios anidados — Programación 3
+  version: 1.0.0
+
+paths:
+
+  /comments/root:
+    post:
+      summary: Crear comentario raíz
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentRequest'
+      responses:
+        '201':
+          description: Comentario raíz creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentResponse'
+
+  /comments/{parentId}/replies:
+    post:
+      summary: Responder a un comentario
+      parameters:
+        - $ref: '#/components/parameters/parentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentRequest'
+      responses:
+        '201':
+          description: Respuesta creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentResponse'
+        '404':
+          description: Comentario padre no encontrado
+
+  /comments/{commentId}/path:
+    get:
+      summary: Ruta desde la raíz hasta el comentario
+      parameters:
+        - $ref: '#/components/parameters/commentId'
+      responses:
+        '200':
+          description: Lista de IDs desde la raíz al nodo (incluye ambos extremos)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdList'
+
+  /comments/{commentId}/depth:
+    get:
+      summary: Profundidad de un comentario
+      parameters:
+        - $ref: '#/components/parameters/commentId'
+      responses:
+        '200':
+          description: Número de aristas desde la raíz hasta el nodo
+          content:
+            application/json:
+              schema:
+                type: integer
+
+  /comments/{commentId}/ancestors:
+    get:
+      summary: Ancestros de un comentario
+      parameters:
+        - $ref: '#/components/parameters/commentId'
+      responses:
+        '200':
+          description: IDs de ancestros desde el padre directo hasta la raíz
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdList'
+
+  /tree:
+    get:
+      summary: Árbol completo de comentarios
+      responses:
+        '200':
+          description: Árbol jerárquico completo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TreeResponse'
+
+  /tree/traversal:
+    get:
+      summary: Recorrido DFS o BFS
+      parameters:
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [DFS, BFS]
+      responses:
+        '200':
+          description: IDs de nodos en orden de recorrido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdList'
+
+  /tree/height:
+    get:
+      summary: Altura del árbol
+      responses:
+        '200':
+          description: Número de niveles del árbol
+          content:
+            application/json:
+              schema:
+                type: integer
+
+  /tree/validate:
+    get:
+      summary: Validar que el árbol no tiene ciclos
+      responses:
+        '200':
+          description: true si no hay ciclos, false si los hay
+          content:
+            application/json:
+              schema:
+                type: boolean
+
+  /tree/{commentId}:
+    get:
+      summary: Subárbol a partir de un comentario
+      parameters:
+        - $ref: '#/components/parameters/commentId'
+      responses:
+        '200':
+          description: Subárbol con raíz en el comentario indicado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TreeResponse'
+
+components:
+
+  schemas:
+
+    CommentRequest:
+      type: object
+      required: [author, content]
+      properties:
+        author:
+          type: string
+          example: Eduardo
+        content:
+          type: string
+          example: Este es el post raíz
+
+    CommentResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        author:
+          type: string
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        parentId:
+          type: integer
+          format: int64
+          nullable: true
+
+    TreeResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        author:
+          type: string
+          nullable: true
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/TreeResponse'
+
+    IdList:
+      type: array
+      items:
+        type: integer
+        format: int64
+
+  parameters:
+
+    commentId:
+      name: commentId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    parentId:
+      name: parentId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
