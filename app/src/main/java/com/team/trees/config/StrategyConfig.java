@@ -1,4 +1,12 @@
-// StrategyConfig.java
+package com.team.trees.config;
+
+import com.team.trees.engine.TreeAlgorithmStrategy;
+import com.team.trees.engine.collections.CollectionsTreeAlgorithm;
+import com.team.trees.engine.custom.CustomTreeAlgorithm;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
 @Configuration
 public class StrategyConfig {
 

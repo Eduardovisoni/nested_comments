@@ -1,4 +1,16 @@
-// StorageConfig.java
+package com.team.trees.config;
+
+import com.team.trees.persistence.TreeRepository;
+import com.team.trees.persistence.memory.MemoryTreeRepository;
+import com.team.trees.persistence.nosql.Neo4jTreeRepository;
+import com.team.trees.persistence.nosql.jpa.Neo4jCommentSpringRepository;
+import com.team.trees.persistence.postgres.PostgresTreeRepository;
+import com.team.trees.persistence.postgres.jpa.PostgresCommentJpaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
 @Configuration
 public class StorageConfig {
 
