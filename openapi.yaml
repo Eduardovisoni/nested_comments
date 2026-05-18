@@ -4,10 +4,18 @@ info:
   description: Backend para gestión de comentarios anidados — Programación 3
   version: 1.0.0
 
+tags:
+  - name: Comments
+    description: Operaciones sobre comentarios individuales
+  - name: Tree
+    description: Operaciones sobre el árbol como un todo
+
 paths:
 
   /comments/root:
     post:
+      tags: [Comments]
+      operationId: createRoot
       summary: Crear comentario raíz
       requestBody:
         required: true
@@ -25,6 +33,8 @@ paths:
 
   /comments/{parentId}/replies:
     post:
+      tags: [Comments]
+      operationId: addReply
       summary: Responder a un comentario
       parameters:
         - $ref: '#/components/parameters/parentId'
@@ -46,6 +56,8 @@ paths:
 
   /comments/{commentId}/path:
     get:
+      tags: [Comments]
+      operationId: getPathToRoot
       summary: Ruta desde la raíz hasta el comentario
       parameters:
         - $ref: '#/components/parameters/commentId'
@@ -55,10 +67,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/IdList'
+                type: array
+                items:
+                  type: integer
+                  format: int64
+        '404':
+          description: Comentario no encontrado
 
   /comments/{commentId}/depth:
     get:
+      tags: [Comments]
+      operationId: getDepth
       summary: Profundidad de un comentario
       parameters:
         - $ref: '#/components/parameters/commentId'
@@ -69,9 +88,13 @@ paths:
             application/json:
               schema:
                 type: integer
+        '404':
+          description: Comentario no encontrado
 
   /comments/{commentId}/ancestors:
     get:
+      tags: [Comments]
+      operationId: getAncestors
       summary: Ancestros de un comentario
       parameters:
         - $ref: '#/components/parameters/commentId'
@@ -81,10 +104,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/IdList'
+                type: array
+                items:
+                  type: integer
+                  format: int64
+        '404':
+          description: Comentario no encontrado
 
   /tree:
     get:
+      tags: [Tree]
+      operationId: getTree
       summary: Árbol completo de comentarios
       responses:
         '200':
@@ -96,24 +126,30 @@ paths:
 
   /tree/traversal:
     get:
+      tags: [Tree]
+      operationId: traversal
       summary: Recorrido DFS o BFS
       parameters:
         - name: type
           in: query
           required: true
           schema:
-            type: string
-            enum: [DFS, BFS]
+            $ref: '#/components/schemas/TraversalType'
       responses:
         '200':
           description: IDs de nodos en orden de recorrido
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/IdList'
+                type: array
+                items:
+                  type: integer
+                  format: int64
 
   /tree/height:
     get:
+      tags: [Tree]
+      operationId: getHeight
       summary: Altura del árbol
       responses:
         '200':
@@ -125,6 +161,8 @@ paths:
 
   /tree/validate:
     get:
+      tags: [Tree]
+      operationId: validate
       summary: Validar que el árbol no tiene ciclos
       responses:
         '200':
@@ -136,6 +174,8 @@ paths:
 
   /tree/{commentId}:
     get:
+      tags: [Tree]
+      operationId: getSubTree
       summary: Subárbol a partir de un comentario
       parameters:
         - $ref: '#/components/parameters/commentId'
@@ -146,6 +186,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TreeResponse'
+        '404':
+          description: Comentario no encontrado
 
 components:
 
@@ -157,9 +199,11 @@ components:
       properties:
         author:
           type: string
+          minLength: 1
           example: Eduardo
         content:
           type: string
+          minLength: 1
           example: Este es el post raíz
 
     CommentResponse:
@@ -200,11 +244,9 @@ components:
           items:
             $ref: '#/components/schemas/TreeResponse'
 
-    IdList:
-      type: array
-      items:
-        type: integer
-        format: int64
+    TraversalType:
+      type: string
+      enum: [DFS, BFS]
 
   parameters:
 

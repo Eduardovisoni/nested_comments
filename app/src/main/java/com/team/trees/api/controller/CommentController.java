@@ -2,17 +2,16 @@ package com.team.trees.api.controller;
 
 import com.team.trees.api.dto.CommentRequest;
 import com.team.trees.api.dto.CommentResponse;
+import com.team.trees.api.generated.CommentsApi;
 import com.team.trees.service.TreeService;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/comments")
-public class CommentController {
+public class CommentController implements CommentsApi {
 
     private final TreeService service;
 
@@ -20,29 +19,30 @@ public class CommentController {
         this.service = service;
     }
 
-    @PostMapping("/root")
-    public ResponseEntity<CommentResponse> createRoot(@RequestBody @Valid CommentRequest req) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.createRoot(req.author(), req.content()));
+    @Override
+    public ResponseEntity<CommentResponse> createRoot(CommentRequest commentRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(service.createRoot(commentRequest.getAuthor(), commentRequest.getContent()));
     }
 
-    @PostMapping("/{parentId}/replies")
-    public ResponseEntity<CommentResponse> addReply(@PathVariable Long parentId,
-                                                     @RequestBody @Valid CommentRequest req) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.addReply(parentId, req.author(), req.content()));
+    @Override
+    public ResponseEntity<CommentResponse> addReply(Long parentId, CommentRequest commentRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(service.addReply(parentId, commentRequest.getAuthor(), commentRequest.getContent()));
     }
 
-    @GetMapping("/{commentId}/path")
-    public ResponseEntity<List<Long>> pathToRoot(@PathVariable Long commentId) {
+    @Override
+    public ResponseEntity<List<Long>> getPathToRoot(Long commentId) {
         return ResponseEntity.ok(service.getPathToRoot(commentId));
     }
 
-    @GetMapping("/{commentId}/depth")
-    public ResponseEntity<Integer> depth(@PathVariable Long commentId) {
+    @Override
+    public ResponseEntity<Integer> getDepth(Long commentId) {
         return ResponseEntity.ok(service.getDepth(commentId));
     }
 
-    @GetMapping("/{commentId}/ancestors")
-    public ResponseEntity<List<Long>> ancestors(@PathVariable Long commentId) {
+    @Override
+    public ResponseEntity<List<Long>> getAncestors(Long commentId) {
         return ResponseEntity.ok(service.getAncestors(commentId));
     }
 }

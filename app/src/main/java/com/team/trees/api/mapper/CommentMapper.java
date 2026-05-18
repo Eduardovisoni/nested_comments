@@ -13,13 +13,12 @@ import java.util.List;
 public class CommentMapper {
 
     public CommentResponse toCommentResponse(Comment comment) {
-        return new CommentResponse(
-                comment.getId(),
-                comment.getAuthor(),
-                comment.getContent(),
-                comment.getCreatedAt(),
-                comment.getParentId()
-        );
+        return new CommentResponse()
+                .id(comment.getId())
+                .author(comment.getAuthor())
+                .content(comment.getContent())
+                .createdAt(comment.getCreatedAt())
+                .parentId(comment.getParentId());
     }
 
     public TreeResponse toTreeResponse(TreeView view) {
@@ -29,6 +28,11 @@ public class CommentMapper {
             children.add(toTreeResponse(child));
         }
         // author y createdAt no están en PlainNode; se enriquecen solo al crear (ver TreeServiceImpl)
-        return new TreeResponse(view.id(), null, view.value(), null, children);
+        return new TreeResponse()
+                .id(view.id())
+                .author(null)
+                .content(view.value())
+                .createdAt(null)
+                .children(children);
     }
 }
