@@ -126,18 +126,47 @@ public class CollectionsTreeAlgorithm implements TreeAlgorithmStrategy {
 
     @Override
     public int height(List<PlainNode> nodes) {
-        throw new UnsupportedOperationException("TODO Semana 2");
-    }
+    	 if (nodes.isEmpty()) return 0;
+    	    TreeView tree = buildTree(nodes);
+    	    return computeHeight(tree);
+    	}
+
+    	private int computeHeight(TreeView node) {
+    	    if (node.children().isEmpty()) return 1;
+    	    int max = 0;
+    	    for (TreeView child : node.children()) {
+    	        int h = computeHeight(child);
+    	        if (h > max) max = h;
+    	    }
+    	    return 1 + max;    }
 
     @Override
     public int depth(List<PlainNode> nodes, Long nodeId) {
-        throw new UnsupportedOperationException("TODO Semana 2");
-    }
+    	 Map<Long, Long> parentMap = new HashMap<>();
+    	    for (PlainNode n : nodes) {
+    	        if (n.parentId() != null) parentMap.put(n.id(), n.parentId());
+    	    }
+    	    int depth = 0;
+    	    Long current = nodeId;
+    	    while (parentMap.containsKey(current)) {
+    	        current = parentMap.get(current);
+    	        depth++;
+    	    }
+    	    return depth;    }
 
     @Override
     public List<Long> ancestors(List<PlainNode> nodes, Long nodeId) {
-        throw new UnsupportedOperationException("TODO Semana 2");
-    }
+    	Map<Long, Long> parentMap = new HashMap<>();
+        for (PlainNode n : nodes) {
+            if (n.parentId() != null) parentMap.put(n.id(), n.parentId());
+        }
+        List<Long> ancestors = new ArrayList<>();
+        Long current = parentMap.get(nodeId);    // empezar desde el padre
+        while (current != null) {
+            ancestors.add(current);
+            current = parentMap.get(current);
+        }
+        return ancestors;    }
 
     @Override
     public boolean hasNoCycles(List<PlainNode> nodes) {
