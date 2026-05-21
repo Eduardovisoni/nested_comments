@@ -87,12 +87,41 @@ public class CollectionsTreeAlgorithm implements TreeAlgorithmStrategy {
 
     @Override
     public TreeView buildSubTree(List<PlainNode> nodes, Long rootId) {
-        throw new UnsupportedOperationException("TODO Semana 2");
+    	// Índice de hijos por padre para BFS eficiente
+        Map<Long, List<PlainNode>> childrenByParent = new HashMap<>();
+        Map<Long, PlainNode> byId = new HashMap<>();
+        for (PlainNode n : nodes) {
+            childrenByParent.computeIfAbsent(n.parentId(), k -> new ArrayList<>()).add(n);
+            byId.put(n.id(), n);
+        }
+        // BFS: recolectar solo los nodos del subárbol
+        List<PlainNode> sub = new ArrayList<>();
+        ArrayDeque<Long> queue = new ArrayDeque<>();
+        queue.offer(rootId);
+        while (!queue.isEmpty()) {
+            Long curr = queue.poll();
+            PlainNode node = byId.get(curr);
+            if (node == null) continue;
+            // La raíz del subárbol no tiene padre en este contexto
+            sub.add(curr.equals(rootId) ? new PlainNode(node.id(), node.value(), null) : node);
+            childrenByParent.getOrDefault(curr, List.of()).forEach(c -> queue.offer(c.id()));
+        }
+        return buildTree(sub);
     }
 
     @Override
     public List<Long> pathToRoot(List<PlainNode> nodes, Long nodeId) {
-        throw new UnsupportedOperationException("TODO Semana 2");
+    	Map<Long, Long> parentMap = new HashMap<>();
+        for (PlainNode n : nodes) {
+            if (n.parentId() != null) parentMap.put(n.id(), n.parentId());
+        }
+        LinkedList<Long> path = new LinkedList<>();
+        Long current = nodeId;
+        while (current != null) {
+            path.addFirst(current);       // inserta al frente → orden raíz → nodo
+            current = parentMap.get(current);
+        }
+        return new ArrayList<>(path);
     }
 
     @Override
