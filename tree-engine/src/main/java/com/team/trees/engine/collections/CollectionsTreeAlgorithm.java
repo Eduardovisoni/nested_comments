@@ -170,6 +170,17 @@ public class CollectionsTreeAlgorithm implements TreeAlgorithmStrategy {
 
     @Override
     public boolean hasNoCycles(List<PlainNode> nodes) {
-        throw new UnsupportedOperationException("TODO Semana 2");
-    }
+    	Map<Long, Long> parentMap = new HashMap<>();
+        for (PlainNode n : nodes) {
+            if (n.parentId() != null) parentMap.put(n.id(), n.parentId());
+        }
+        for (PlainNode p : nodes) {
+            Set<Long> visited = new HashSet<>();
+            Long current = p.id();
+            while (current != null) {
+                if (!visited.add(current)) return false;    // ciclo detectado
+                current = parentMap.get(current);
+            }
+        }
+        return true;    }
 }
