@@ -7,3 +7,4 @@
 # La tabla de combinaciones → perfiles del Commit 1 (ningún paso de "editar application.properties").
 # Los 4 POST con los JSON exactos.
 # La tabla de las 9 verificaciones con los valores esperados.
+
