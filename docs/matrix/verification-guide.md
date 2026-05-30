@@ -1,5 +1,4 @@
 
-
 # Guía de verificación de matriz
 
 # El flujo Swagger UI (cómo desplegar endpoint, Try it out, Execute, leer Response).
