@@ -9,6 +9,7 @@ public class CollectionsTreeAlgorithm implements TreeAlgorithmStrategy {
 
     @Override
     public TreeView buildTree(List<PlainNode> nodes) {
+        if (nodes.isEmpty()) return null;
         // Indexamos por id para acceso O(1)
         Map<Long, List<PlainNode>> childrenByParent = new HashMap<>();
         for (PlainNode n : nodes) {
@@ -17,7 +18,8 @@ public class CollectionsTreeAlgorithm implements TreeAlgorithmStrategy {
         PlainNode root = nodes.stream()
             .filter(n -> n.parentId() == null)
             .findFirst()
-            .orElseThrow(() -> new IllegalStateException("No root found"));
+            .orElse(null);
+        if (root == null) return null;
         return build(root, childrenByParent);
     }
 
@@ -29,6 +31,7 @@ public class CollectionsTreeAlgorithm implements TreeAlgorithmStrategy {
 
     @Override
     public List<Long> dfs(List<PlainNode> nodes) {
+        if (nodes.isEmpty()) return List.of();
     	// Construimos el mapa de hijos igual que en buildTree
         Map<Long, List<PlainNode>> childrenByParent = new HashMap<>();
         for (PlainNode n : nodes) {
@@ -37,7 +40,8 @@ public class CollectionsTreeAlgorithm implements TreeAlgorithmStrategy {
         PlainNode root = nodes.stream()
             .filter(n -> n.parentId() == null)
             .findFirst()
-            .orElseThrow(() -> new IllegalStateException("No root found"));
+            .orElse(null);
+        if (root == null) return List.of();
 
         List<Long> result = new ArrayList<>();
         // Usamos ArrayDeque como pila: push agrega al frente, pop saca del frente
@@ -58,6 +62,7 @@ public class CollectionsTreeAlgorithm implements TreeAlgorithmStrategy {
 
     @Override
     public List<Long> bfs(List<PlainNode> nodes) {
+        if (nodes.isEmpty()) return List.of();
     	// Construimos el mapa de hijos igual que en buildTree
         Map<Long, List<PlainNode>> childrenByParent = new HashMap<>();
         for (PlainNode n : nodes) {
@@ -66,7 +71,8 @@ public class CollectionsTreeAlgorithm implements TreeAlgorithmStrategy {
         PlainNode root = nodes.stream()
             .filter(n -> n.parentId() == null)
             .findFirst()
-            .orElseThrow(() -> new IllegalStateException("No root found"));
+            .orElse(null);
+        if (root == null) return List.of();
 
         List<Long> result = new ArrayList<>();
         // Usamos ArrayDeque como cola: offer agrega al final, poll saca del frente
